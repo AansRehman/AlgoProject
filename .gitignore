@@ -33,6 +33,10 @@ build/
 /email-Eu-core.txt
 /DFS_Stack.txt
 /BFS_Queue.txt
+/web-Stanford.txt
+/Wiki-Vote.txt
+/BFS_Time.txt
+/DFS_Time.txt
 
 ### VS Code ###
 .vscode/

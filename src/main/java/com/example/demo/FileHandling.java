@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Scanner;
 
+import static javafx.application.Application.launch;
+
 public class FileHandling {
     String fileLink;
     static private int nodes;
@@ -43,7 +45,13 @@ public class FileHandling {
     {
         try {
             FileWriter fileWriter = new FileWriter("DFS_Time.txt",true);
-            fileWriter.write(numOfNodes+","+execTime+"\n");
+            File file = new File("DFS_Time.txt");
+            if(file.length()==0){
+                fileWriter.write(numOfNodes+","+execTime);
+            }
+            else {
+                fileWriter.write("\n"+numOfNodes+","+execTime);
+            }
             fileWriter.close();
         }catch(IOException e)
         {
@@ -56,7 +64,13 @@ public class FileHandling {
     {
         try {
             FileWriter fileWriter = new FileWriter("BFS_Time.txt",true);
-            fileWriter.write(numOfNodes+","+execTime+"\n");
+            File file = new File("BFS_Time.txt");
+            if(file.length()==0){
+                fileWriter.write(numOfNodes+","+execTime);
+            }
+            else {
+                fileWriter.write("\n"+numOfNodes+","+execTime);
+            }
             fileWriter.close();
         }catch(IOException e)
         {
@@ -67,6 +81,70 @@ public class FileHandling {
     String[] data;
     String node1;
     String node2;
+
+    public void time_cal(int starting_node)
+    {
+        try {
+            FileReader fileReader = new FileReader(fileLink);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line;
+
+
+            for (int i=0;((line = bufferedReader.readLine())!=null);i++) {
+
+//                System.out.println(count+"----------------------");
+                data = line.split(" ");
+                node1 = data[0];
+                node2 = data[1];
+                if (((Integer.parseInt(node1)) < nodes) && (Integer.parseInt(node2) < nodes)) {
+//                    System.out.println("Adding egde--------------");
+                    bfs_graph.addEdge(Integer.parseInt(node1), Integer.parseInt((node2)));
+                    dfs_graph.addEdge(Integer.parseInt((node1)), Integer.parseInt((node2)));
+                    cycle.addEdge(Integer.parseInt(node1), Integer.parseInt(node2));
+                }
+            }
+
+            bufferedReader.close();
+
+//                for (int i=1; i<=nodes; i++, nodes -= (100)) {
+//
+//                    long BFS_exec_time;
+//                    BFS_exec_time = bfs_graph.BFS(starting_node);
+//                    System.out.println();
+//                    System.out.println("The Execution Time in milli seconds for BFS: " + BFS_exec_time);
+//                    System.out.println();
+//                    write_in_BFS_Time(nodes, BFS_exec_time);
+//
+//
+//                    long DFS_exec_time = 0;
+//                    DFS_exec_time = dfs_graph.DFS(starting_node);
+//                    System.out.println();
+//                    System.out.println("The Execution Time in milli seconds for DFS: " + (DFS_exec_time));
+//                    System.out.println();
+//                    write_in_DFS_Time(nodes, DFS_exec_time);
+//
+//                    long start_cycle = System.currentTimeMillis();
+//                    if (cycle.isCyclic() > 0)
+//                        System.out.println("Graph contains cycle(s): " + cycle.isCyclic());
+//                    else
+//                        System.out.println("Graph doesn't contain cycle");
+//                    long end_cycle = System.currentTimeMillis();
+//                    System.out.println();
+//                    System.out.println("The Execution Time in milli seconds for isCyclic: " + (end_cycle - start_cycle));
+//                    System.out.println();
+            long bfsTime=calculate_BFS(starting_node);
+            long dfsTime=calculate_DFS(starting_node);
+            long cycleTime=calculate_cycle();
+            System.out.println("Total Execution Time in milli seconds: " + (bfsTime+dfsTime+cycleTime));
+//            CountNodes countNodes = new CountNodes();
+//            countNodes.countNumberOfNodes(fileLink);
+//            menu();
+        }catch (Exception e)
+        {
+            System.out.println("ERROR: File not readed");
+            e.printStackTrace();
+        }
+    }
 
     public void read() throws IOException {
 
@@ -111,24 +189,71 @@ public class FileHandling {
             FileReader fileReader = new FileReader(fileLink);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line;
-            for (int i=0;(line = bufferedReader.readLine())!=null;i++)
-            {
+
+
+            for (int i=0;((line = bufferedReader.readLine())!=null);i++) {
+
+//                System.out.println(count+"----------------------");
                 data = line.split(" ");
                 node1 = data[0];
                 node2 = data[1];
-                if (((Integer.parseInt(node1))<nodes) && (Integer.parseInt(node2)<nodes)) {
+                if (((Integer.parseInt(node1)) < nodes) && (Integer.parseInt(node2) < nodes)) {
+//                    System.out.println("Adding egde--------------");
                     bfs_graph.addEdge(Integer.parseInt(node1), Integer.parseInt((node2)));
                     dfs_graph.addEdge(Integer.parseInt((node1)), Integer.parseInt((node2)));
                     cycle.addEdge(Integer.parseInt(node1), Integer.parseInt(node2));
                 }
             }
+
             bufferedReader.close();
+
+
             menu();
         }catch (Exception e)
         {
             System.out.println("ERROR: File not readed");
             e.printStackTrace();
         }
+    }
+    Scanner sc = new Scanner(System.in);
+    public long calculate_BFS(int starting_node)
+    {
+        long exec_time;
+//        System.out.println("Enter the starting node: ");
+//        int starting_node = sc.nextInt();
+        exec_time = bfs_graph.BFS(starting_node);
+        System.out.println();
+        System.out.println("The Execution Time in milli seconds for BFS: "+ exec_time);
+        System.out.println();
+        write_in_BFS_Time(nodes, exec_time);
+        return exec_time;
+    }
+
+    public long calculate_DFS(int starting_node)
+    {
+        long exec_time;
+//        System.out.println("Enter the starting node: ");
+//        int starting_node = sc.nextInt();
+        exec_time = dfs_graph.DFS(starting_node);
+        System.out.println();
+        System.out.println("The Execution Time in milli seconds for DFS: "+ (exec_time));
+        System.out.println();
+        write_in_DFS_Time(nodes, exec_time);
+        return exec_time;
+    }
+
+    public long calculate_cycle()
+    {
+        long start = System.currentTimeMillis();
+        if(cycle.isCyclic()>0)
+            System.out.println("Graph contains cycle(s): "+cycle.isCyclic());
+        else
+            System.out.println("Graph doesn't contain cycle");
+        long end = System.currentTimeMillis();
+        System.out.println();
+        System.out.println("The Execution Time in milli seconds for isCyclic: "+ (end-start));
+        System.out.println();
+        return (end-start);
     }
 
     public void menu()
@@ -146,78 +271,64 @@ public class FileHandling {
         int choice = sc.nextInt();
         switch (choice){
             case 1:{
-                long exec_time;
                 System.out.println("Enter the starting node: ");
                 int starting_node = sc.nextInt();
-                exec_time = bfs_graph.BFS(starting_node);
-                System.out.println();
-                System.out.println("The Execution Time in milli seconds for BFS: "+ exec_time);
-                System.out.println();
-                write_in_BFS_Time(nodes, exec_time);
+                calculate_BFS(starting_node);
                 menu();
                 break;
             }
             case 2:{
-                long exec_time;
                 System.out.println("Enter the starting node: ");
                 int starting_node = sc.nextInt();
-                exec_time = dfs_graph.DFS(starting_node);
-                System.out.println();
-                System.out.println("The Execution Time in milli seconds for DFS: "+ (exec_time));
-                System.out.println();
-//                write_in_DFS_Time(nodes, exec_time);
-//                menu();
+                calculate_DFS(starting_node);
+                menu();
                 break;
             }
             case 3:{
-                long start = System.currentTimeMillis();
-                if(cycle.isCyclic()>0)
-                    System.out.println("Graph contains cycle(s): "+cycle.isCyclic());
-                else
-                    System.out.println("Graph doesn't contain cycle");
-                long end = System.currentTimeMillis();
-                System.out.println();
-                System.out.println("The Execution Time in milli seconds for isCyclic: "+ (end-start));
-                System.out.println();
+                calculate_cycle();
                 menu();
                 break;
             }
             case 4:{
                 System.out.println("Enter the starting node: ");
                 int starting_node = sc.nextInt();
-                for (int i=1; i<=nodes; i++, nodes -= (100)) {
-
-                    long BFS_exec_time;
-                    BFS_exec_time = bfs_graph.BFS(starting_node);
-                    System.out.println();
-                    System.out.println("The Execution Time in milli seconds for BFS: " + BFS_exec_time);
-                    System.out.println();
-                    write_in_BFS_Time(nodes, BFS_exec_time);
-
-
-                    long DFS_exec_time = 0;
-                    DFS_exec_time = dfs_graph.DFS(starting_node);
-                    System.out.println();
-                    System.out.println("The Execution Time in milli seconds for DFS: " + (DFS_exec_time));
-                    System.out.println();
-                    write_in_DFS_Time(nodes, DFS_exec_time);
-
-                    long start_cycle = System.currentTimeMillis();
-                    if (cycle.isCyclic() > 0)
-                        System.out.println("Graph contains cycle(s): " + cycle.isCyclic());
-                    else
-                        System.out.println("Graph doesn't contain cycle");
-                    long end_cycle = System.currentTimeMillis();
-                    System.out.println();
-                    System.out.println("The Execution Time in milli seconds for isCyclic: " + (end_cycle - start_cycle));
-                    System.out.println();
-                    System.out.println("Total Execution Time in milli seconds: " + (BFS_exec_time + DFS_exec_time + (end_cycle - start_cycle)));
-
-                }
+//                for (int i=1; i<=nodes; i++, nodes -= (100)) {
+//
+//                    long BFS_exec_time;
+//                    BFS_exec_time = bfs_graph.BFS(starting_node);
+//                    System.out.println();
+//                    System.out.println("The Execution Time in milli seconds for BFS: " + BFS_exec_time);
+//                    System.out.println();
+//                    write_in_BFS_Time(nodes, BFS_exec_time);
+//
+//
+//                    long DFS_exec_time = 0;
+//                    DFS_exec_time = dfs_graph.DFS(starting_node);
+//                    System.out.println();
+//                    System.out.println("The Execution Time in milli seconds for DFS: " + (DFS_exec_time));
+//                    System.out.println();
+//                    write_in_DFS_Time(nodes, DFS_exec_time);
+//
+//                    long start_cycle = System.currentTimeMillis();
+//                    if (cycle.isCyclic() > 0)
+//                        System.out.println("Graph contains cycle(s): " + cycle.isCyclic());
+//                    else
+//                        System.out.println("Graph doesn't contain cycle");
+//                    long end_cycle = System.currentTimeMillis();
+//                    System.out.println();
+//                    System.out.println("The Execution Time in milli seconds for isCyclic: " + (end_cycle - start_cycle));
+//                    System.out.println();
+                    long bfsTime=calculate_BFS(starting_node);
+                    long dfsTime=calculate_DFS(starting_node);
+                    long cycleTime=calculate_cycle();
+                    System.out.println("Total Execution Time in milli seconds: " + (bfsTime+dfsTime+cycleTime));
+//                }
                 menu();
                 break;
             }
             case 5:{
+
+//                menu();
                 break;
             }
             case 0:{

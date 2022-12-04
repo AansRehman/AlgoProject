@@ -57,6 +57,7 @@ public class DFS_Graph {
 
             if (visited.get(s) == false) {
                 System.out.print(s + " ");
+                writing_time += write(stack);
                 visited.set(s, true);
             }
 
@@ -67,13 +68,12 @@ public class DFS_Graph {
                 if (!visited.get(v))
                     stack.push(v);
             }
-            writing_time += write(stack);
         }
         long end = System.currentTimeMillis();
         long execution_time =  (end-start);
         System.out.println();
         System.out.println("The Writing Time in milli seconds for DFS: "+ (writing_time));
         System.out.println("The Total Time in milli seconds for DFS: "+ (execution_time));
-        return (execution_time-writing_time);
+        return (execution_time);
     }
 }

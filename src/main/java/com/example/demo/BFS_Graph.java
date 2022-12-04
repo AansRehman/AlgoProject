@@ -21,6 +21,7 @@ public class BFS_Graph {
 
     void addEdge(int v,int w)
     {
+//        System.out.println("Edge adding");
         adj[v].add(w);
     }
 
@@ -70,6 +71,6 @@ public class BFS_Graph {
         System.out.println();
         System.out.println("The Writing Time in milli seconds for BFS: "+ (writing_time));
         System.out.println("The Total Time in milli seconds for BFS: "+ (execution_time));
-        return (execution_time-writing_time);
+        return (execution_time);
     }
 }
